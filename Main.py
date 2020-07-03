@@ -3,6 +3,8 @@ import pyglet
 from pymunk.pyglet_util import DrawOptions
 from pyglet.window import key, mouse
 import Board
+import random
+import math
 
 WHITE = 255, 255, 255
 GRAY = 127.5, 127.5, 127.5
@@ -36,9 +38,14 @@ space.add(ball, ball_body)
 for i in Board.net:
     space.add(i)
 
+left_player.elasticity, left_body.elasticity, right_player.elasticity, right_body.elasticity, ball.elasticity, ball_body.elasticity = 0.99, 0.99, 0.99, 0.99, 0.99, 0.99
+left_player.friction, left_body.friction, right_player.friction, right_body.friction, ball.friction, ball_body.friction = 0, 0, 0, 0, 0, 0
+
 w_pressed, s_pressed, up_pressed, down_pressed = False, False, False, False
 
-speed = 10
+speed = 12
+
+started = False
 
 @window.event
 def on_draw():
@@ -47,7 +54,7 @@ def on_draw():
 
 @window.event
 def on_key_press(symbol, modifiers):
-    global w_pressed, s_pressed, up_pressed, down_pressed
+    global w_pressed, s_pressed, up_pressed, down_pressed, started
     if symbol == key.W:
         w_pressed = True
         s_pressed = False
@@ -80,6 +87,14 @@ def on_key_press(symbol, modifiers):
             right_player.position = x, y - speed
             x,y = right_body.position
             right_body.position = x, y - speed
+    elif symbol == key.SPACE and started == False:
+        if random.randint(1, 2) == 1:
+            ball_body.angle = random.uniform(math.pi/6, (-1 * math.pi)/6)
+        else:
+            ball_body.angle = random.uniform((5 * math.pi)/6, (7 * math.pi)/6)
+        power = 40
+        ball_body.apply_force_at_local_point((1000 * power, 1000), (1000 * power, 1000))
+        started = True
 
 @window.event
 def on_key_release(symbol, modifiers):

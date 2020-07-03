@@ -9,7 +9,15 @@ bottom_body = pymunk.Body(1, 100, pymunk.Body.KINEMATIC)
 bottom_wall = pymunk.Poly.create_box(bottom_body, size = (1280, 10))
 bottom_body.position = 640, -5
 
+top_body.elasticity, top_wall.elasticity, bottom_body.elasticity, bottom_wall.elasticity = 0.99, 0.99, 0.99, 0.99
+top_body.friction, top_wall.friction, bottom_body.friction, bottom_wall.friction = 0, 0, 0, 0
+
 net = []
+
+net.append(top_body)
+net.append(top_wall)
+net.append(bottom_body)
+net.append(bottom_wall)
 
 y_value = 0
 
