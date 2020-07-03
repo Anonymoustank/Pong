@@ -5,14 +5,12 @@ from pyglet.window import key, mouse
 import Board
 
 WHITE = 255, 255, 255
+GRAY = 127.5, 127.5, 127.5
 options = DrawOptions()
 window = pyglet.window.Window(1280, 720, "Game", resizable = False)
 window.set_mouse_visible(False)
 space = pymunk.Space()
 space.gravity = 0, 0
-
-for i in Board.net:
-    space.add(i)
 
 left_body = pymunk.Body(1, 100, pymunk.Body.KINEMATIC)
 left_player = pymunk.Poly.create_box(left_body, size = (15, 150))
@@ -24,9 +22,19 @@ right_player = pymunk.Poly.create_box(right_body, size = (15, 150))
 right_body.position = 1250, 360
 right_player.position = 1250, 360
 
-left_player.color, right_player.color = WHITE, WHITE
+ball_body = pymunk.Body(1, 100)
+ball = pymunk.Circle(ball_body, 10, offset = (0, 0))
+ball_body.position = 640, 360
+ball.position = 640, 360
+
+left_player.color, right_player.color, ball.color = WHITE, WHITE, GRAY
 
 space.add(left_body, left_player, right_body, right_player)
+
+space.add(ball, ball_body)
+
+for i in Board.net:
+    space.add(i)
 
 w_pressed, s_pressed, up_pressed, down_pressed = False, False, False, False
 
