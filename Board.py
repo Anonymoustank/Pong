@@ -1,11 +1,11 @@
 import pymunk
 WHITE = 255, 255, 255
 
-top_body = pymunk.Body(1, 100, pymunk.Body.KINEMATIC)
+top_body = pymunk.Body(1, 100, pymunk.Body.STATIC)
 top_wall = pymunk.Poly.create_box(top_body, size = (1280, 10))
 top_body.position = 640, 725
 
-bottom_body = pymunk.Body(1, 100, pymunk.Body.KINEMATIC)
+bottom_body = pymunk.Body(1, 100, pymunk.Body.STATIC)
 bottom_wall = pymunk.Poly.create_box(bottom_body, size = (1280, 10))
 bottom_body.position = 640, -5
 

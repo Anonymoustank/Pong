@@ -33,8 +33,6 @@ left_player.color, right_player.color, ball.color = WHITE, WHITE, GRAY
 
 space.add(left_body, left_player, right_body, right_player)
 
-space.add(ball, ball_body)
-
 for i in Board.net:
     space.add(i)
 
@@ -44,8 +42,25 @@ left_player.friction, left_body.friction, right_player.friction, right_body.fric
 w_pressed, s_pressed, up_pressed, down_pressed = False, False, False, False
 
 speed = 12
-
 started = False
+count = 1
+
+damp_level = 1
+
+def zero_gravity(body, gravity, damping, dt):
+    pymunk.Body.update_velocity(body, (0,0), damp_level, dt)
+
+ball_body.velocity_func = zero_gravity
+def shoot():
+    ball_body.position = 640, 360
+    ball.position = 640, 360
+    if random.randint(1, 2) == 1:
+        ball_body.angle = random.uniform(math.pi/6, (-1 * math.pi)/6)
+    else:
+        ball_body.angle = random.uniform((5 * math.pi)/6, (7 * math.pi)/6)
+    ball_body.angle = math.pi/2
+    power = 40
+    ball_body.apply_force_at_local_point((1000 * power, 1000), (1000 * power, 1000))
 
 @window.event
 def on_draw():
@@ -88,12 +103,8 @@ def on_key_press(symbol, modifiers):
             x,y = right_body.position
             right_body.position = x, y - speed
     elif symbol == key.SPACE and started == False:
-        if random.randint(1, 2) == 1:
-            ball_body.angle = random.uniform(math.pi/6, (-1 * math.pi)/6)
-        else:
-            ball_body.angle = random.uniform((5 * math.pi)/6, (7 * math.pi)/6)
-        power = 40
-        ball_body.apply_force_at_local_point((1000 * power, 1000), (1000 * power, 1000))
+        space.add(ball, ball_body)
+        shoot()
         started = True
 
 @window.event
@@ -109,7 +120,15 @@ def on_key_release(symbol, modifiers):
         down_pressed = False
 
 def refresh(time):
+    global count, damp_level, energy
     space.step(time)
+    if count == 1 and started == True:
+        energy = ball_body.kinetic_energy
+        count += 1
+    if ball_body.kinetic_energy == 0:
+        damp_level = 1
+    else:
+        damp_level = energy/ball_body.kinetic_energy
     if w_pressed == True and s_pressed == False:
         x, y = left_player.position
         if y <= 720 - 75:
@@ -136,5 +155,5 @@ def refresh(time):
             right_body.position = x, y - speed
 
 if __name__ == "__main__":
-    pyglet.clock.schedule_interval(refresh, 1.0/60.0)
+    pyglet.clock.schedule_interval(refresh, 1.0/120.0)
     pyglet.app.run()
