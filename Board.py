@@ -28,6 +28,7 @@ for i in range(1, 11):
     exec("box%s = pymunk.Poly.create_box(body%s, size = (40, 61))" % (i, i))
     exec("box%s.color = WHITE" % i)
     exec("box%s.sensor = True" % i)
+    exec("body%s.sensor = True" % i)
     exec("body%s.position = 640, y_value" % i)
     exec("net.append(body%s)" % i)
     exec("net.append(box%s)" % i)
