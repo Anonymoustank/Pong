@@ -51,22 +51,37 @@ def zero_gravity(body, gravity, damping, dt):
 
 ball_body.velocity_func = zero_gravity
 
+left_win = False
+right_win = False
+
+score_to_win = 5
+
 def shoot():
-    global damp_level
-    ball_body.position = 640, 360
-    ball.position = 640, 360
-    ball_body.angle = 0
-    ball.angle = 0
-    random_num = random.randint(1, 2)
-    if random_num == 1:
-        ball_body.angle = random.uniform(math.pi/6, (-1 * math.pi)/6)
-        ball.angle = ball_body.angle
+    global damp_level, left_win, right_win
+    if left_score == score_to_win and right_win == False:
+        left_win = True
+        for i in Board.net:
+            space.remove(i)
+    elif right_score == score_to_win and left_win == False:
+        right_win = True
+        for i in Board.net:
+            space.remove(i)
     else:
-        ball_body.angle = random.uniform((5 * math.pi)/6, (7 * math.pi)/6)
-        ball.angle = ball_body.angle
-    power = 40
-    damp_level = 0
-    ball_body.apply_force_at_local_point((1000 * power, 1000), (1000 * power, 1000))
+        if left_win == False and right_win == False:
+            ball_body.position = 640, 360
+            ball.position = 640, 360
+            ball_body.angle = 0
+            ball.angle = 0
+            random_num = random.randint(1, 2)
+            if random_num == 1:
+                ball_body.angle = random.uniform(math.pi/6, (-1 * math.pi)/6)
+                ball.angle = ball_body.angle
+            else:
+                ball_body.angle = random.uniform((5 * math.pi)/6, (7 * math.pi)/6)
+                ball.angle = ball_body.angle
+            power = 40
+            damp_level = 0
+            ball_body.apply_force_at_local_point((1000 * power, 1000), (1000 * power, 1000))
 
 @window.event
 def on_draw():
@@ -79,11 +94,21 @@ def on_draw():
         right_label.draw()
         top_label = pyglet.text.Label('Press Space to Start', font_name='Times New Roman', font_size=36, x=640, y=600, anchor_x='center', anchor_y='center')
         top_label.draw()
+    elif left_win == True:
+        left_victory = pyglet.text.Label('Player 1 Wins!', font_name='Times New Roman', font_size=36, x=640, y=360, anchor_x='center', anchor_y='center')
+        left_victory.draw()
+    elif right_win == True:
+        right_victory = pyglet.text.Label('Player 2 Wins!', font_name='Times New Roman', font_size=36, x=640, y=360, anchor_x='center', anchor_y='center')
+        right_victory.draw()
     else:
         left_score_label = pyglet.text.Label(str(left_score), font_name='Times New Roman', font_size=60, x=500, y=650, anchor_x='center', anchor_y='center')
         left_score_label.draw()
         right_score_label = pyglet.text.Label(str(right_score), font_name='Times New Roman', font_size=60, x=780, y=650, anchor_x='center', anchor_y='center')
         right_score_label.draw()
+        player1_label = pyglet.text.Label('Player 1', font_name='Times New Roman', font_size=35, x=100, y=700, anchor_x='center', anchor_y='center')
+        player1_label.draw()
+        player2_label = pyglet.text.Label('Player 2', font_name='Times New Roman', font_size=35, x=1180, y=700, anchor_x='center', anchor_y='center')
+        player2_label.draw()
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -142,11 +167,11 @@ def on_key_release(symbol, modifiers):
 def refresh(time):
     global count, damp_level, energy, left_score, right_score
     ball_body_x, ball_body_y = ball_body.position
-    if ball_body_x < 0:
+    if ball_body_x < 0 and left_win == False and right_win == False:
         right_score += 1
         shoot()
         count = 1
-    elif ball_body_x > 1280:
+    elif ball_body_x > 1280 and left_win == False and right_win == False:
         left_score += 1
         shoot()
         count = 1
