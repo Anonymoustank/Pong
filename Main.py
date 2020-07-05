@@ -42,6 +42,8 @@ speed = 12
 started = False
 count = 1
 
+target_velocity = 0, 0
+
 damp_level = 1
 left_score = 0
 right_score = 0
@@ -165,7 +167,7 @@ def on_key_release(symbol, modifiers):
         down_pressed = False
 
 def refresh(time):
-    global count, damp_level, energy, left_score, right_score
+    global count, damp_level, energy, left_score, right_score, target_x, target_y, target_velocity
     ball_body_x, ball_body_y = ball_body.position
     if ball_body_x < 0 and left_win == False and right_win == False:
         right_score += 1
@@ -177,12 +179,18 @@ def refresh(time):
         count = 1
     space.step(time)
     if count == 1 and started == True:
-        energy = ball_body.kinetic_energy
+        # energy = ball_body.kinetic_energy
+        target_velocity = ball_body.velocity
+        target_x, target_y = target_velocity
         count += 1
     if ball_body.kinetic_energy == 0:
         damp_level = 1
     else:
-        damp_level = energy/ball_body.kinetic_energy
+        # damp_level = energy/ball_body.kinetic_energy
+        target_x, target_y = target_velocity
+        current_x, current_y = ball_body.velocity
+        current_velocity = math.sqrt(current_x ** 2 + current_y ** 2)
+        damp_level = (math.sqrt(target_x ** 2 + target_y ** 2))/current_velocity
     if w_pressed == True and s_pressed == False:
         x, y = left_player.position
         if y <= 720 - 75:
